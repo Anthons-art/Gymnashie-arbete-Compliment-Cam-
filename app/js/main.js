@@ -1,9 +1,10 @@
 // app/js/main.js
-import { initDetection, detectFaces } from './detection.js';
+import { initDetection, detectFacesAsync, isReady } from './detection.js';
 import { initCompliments, randomCompliment } from './compliments.js';
 import { clearCanvas, drawFrame, drawRobotIdle, drawRobotSpeak } from './ui.js';
 import { initTTS, speak as ttsSpeak } from './tts.js';
 
+// DOM
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const startBtn = document.getElementById('start');
@@ -12,12 +13,17 @@ const overlay = document.getElementById('overlay');
 const retryBtn = document.getElementById('retry');
 const adminLink = document.getElementById('adminLink');
 
+// Video + state
 let video = null;
 let started = false;
 let stableCounter = 0;
 const STABLE_FRAMES = 5;
 let state = 'idle';
 let stateUntil = 0;
+
+// Detection worker state
+let latestDetection = { count: 0, detections: [] };
+let runningDetection = false;
 
 // greeting stats (localStorage)
 function incGreetingCount() {
@@ -31,11 +37,12 @@ function getStats() {
   return JSON.parse(localStorage.getItem('greetStats') || '{}');
 }
 
-// camera init
+// Camera init
 async function initCamera(){
   video = document.createElement('video');
   video.setAttribute('playsinline','');
   video.autoplay = true;
+  // lägre upplösning = bättre för budget-plattor
   const stream = await navigator.mediaDevices.getUserMedia({
     video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } },
     audio: false
@@ -56,15 +63,34 @@ function hideOverlay(){ overlay.style.display = 'none'; }
 function setState(s, ms=0) { state = s; stateUntil = performance.now() + ms; }
 function inCooldown() { return performance.now() < stateUntil; }
 
-function triggerComplimentFlow(text){
-  // show speak UI and TTS/fallback
+// detection worker: kör detectFacesAsync i bakgrunden utan att blockera UI
+async function detectionWorker() {
+  // kör kontinuerligt med paus så vi inte spammar CPU
+  if (!runningDetection && isReady()) {
+    runningDetection = true;
+    try {
+      latestDetection = await detectFacesAsync();
+    } catch (e) {
+      latestDetection = { count: 0, detections: [] };
+      console.warn('detectionWorker error', e);
+    }
+    runningDetection = false;
+  }
+  // nästa körning efter ~80 ms (justera om plattan är svag)
+  setTimeout(detectionWorker, 80);
+}
+
+// Trigger flow (vad som händer när vi bestämmer oss för att ge komplimang)
+function triggerComplimentFlow(text) {
+  // visa speak UI + spela TTS om möjligt
   drawRobotSpeak(ctx, canvas, text);
   incGreetingCount();
-  const ttsOk = ttsSpeak(text);
-  // if TTS not available, just show text (fallback audio can be added)
+  const ok = ttsSpeak(text);
+  // om ok === false => TTS ej tillgängligt, vi visar text ändå
   setState('cooldown', 3500);
 }
 
+// State uppdatering baserat på senaste detektion
 function updateStateWithFace(faceCount) {
   if (faceCount > 0) stableCounter++; else stableCounter = 0;
 
@@ -81,25 +107,33 @@ function updateStateWithFace(faceCount) {
       }
       break;
     case 'cooldown':
-      // just wait
       if (performance.now() >= stateUntil) setState('idle', 0);
       break;
   }
 }
 
+// huvudloop - ritar UI och läser senaste detection-resultat
 function loop(t) {
   if (!started) return;
   clearCanvas(ctx, canvas);
-  // optionally draw camera background for mirror feel (commented out if perf is low)
-  // ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-  const { count } = detectFaces(performance.now());
+  // Läs senaste detection-resultat (uppdateras av detectionWorker)
+  const { count } = latestDetection;
+
   updateStateWithFace(count);
 
-  // draw UI based on state
+  // Rita UI enligt state
   drawFrame(ctx, canvas);
   if (state === 'idle') drawRobotIdle(ctx, canvas, t);
-  // wave state could have small animation - for POC we reuse idle
+  else if (state === 'wave') {
+    // enkel wave: visa robot idle men vi kan lägga till animation senare
+    drawRobotIdle(ctx, canvas, t);
+  } else if (state === 'cooldown') {
+    // Visas av triggerComplimentFlow när SPEAK inträffar
+    // efter SPEAK är det cooldown; vi återgår till idle när tiden är slut
+    drawRobotIdle(ctx, canvas, t);
+  }
+
   requestAnimationFrame(loop);
 }
 
@@ -111,23 +145,28 @@ async function boot() {
     await initCamera();
     statusEl.textContent = 'Initierar detektor...';
     await initDetection(video);
+    // Starta detection worker i bakgrunden
+    detectionWorker();
     statusEl.textContent = 'Initierar komplimanger...';
     await initCompliments();
-    await initTTS(); // best-effort
+    statusEl.textContent = 'Initierar röst (TTS)...';
+    await initTTS().catch(()=>{/*ignore if not available*/});
     statusEl.textContent = 'Klar – tryck Starta';
     startBtn.disabled = false;
+    console.log('Boot complete');
   } catch (e) {
     console.error('Boot failed', e);
-    showOverlay('Fel vid uppstart', 'Kan inte starta kamera eller laddning av modeller. Kontrollera kamera-tillstånd och internet (för första laddning).');
+    showOverlay('Fel vid uppstart', 'Kan inte starta kamera eller ladda modell. Kontrollera kamera-tillstånd och internet (för första laddning av modell).');
     startBtn.disabled = false;
   }
 }
 
-// event handlers
+// Event handlers
 startBtn.addEventListener('click', async () => {
   startBtn.disabled = true;
   statusEl.textContent = 'Kör...';
   if (!video) {
+    // Om boot inte redan körts
     await boot();
   }
   started = true;
@@ -145,5 +184,6 @@ adminLink.addEventListener('click', (e) => {
   alert('Greet stats (local):\n' + JSON.stringify(stats, null, 2));
 });
 
-// auto-boot minimal (so Start will be quick)
+// auto-boot minimal så Start blir snabb (vi initierar så mycket vi kan i bakgrunden)
 boot();
+
