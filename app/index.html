@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ComplimentCam – POC</title>
+  <style>
+    html,body {margin:0;height:100%;background:#0b1020;color:#fff;font-family:system-ui}
+    #wrap {display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:16px}
+    #start {padding:14px 20px;font-size:18px;border-radius:10px;border:0;cursor:pointer;background:#2dd4bf;color:#04111a}
+    #canvas {width:90vw;max-width:800px;aspect-ratio:4/3;background:#111;border-radius:16px;box-shadow:0 8px 30px rgba(0,0,0,0.5)}
+    #status {margin-top:10px;opacity:.9}
+    #overlay {position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);z-index:50}
+    #overlay .box {background:#111;padding:20px;border-radius:12px;border:2px solid #2dd4bf;max-width:90%;text-align:center}
+    a.small {color:#9ee7d5;font-size:13px}
+  </style>
+</head>
+<body>
+  <div id="wrap">
+    <button id="start">Starta ComplimentCam</button>
+    <canvas id="canvas" width="640" height="480"></canvas>
+    <div id="status">Status: väntar…</div>
+    <div style="margin-top:8px"><a class="small" href="#" id="adminLink">Admin: visa statistik</a></div>
+  </div>
+
+  <div id="overlay">
+    <div class="box">
+      <h2 id="overlayTitle">Åtgärd krävs</h2>
+      <p id="overlayMsg">Något gick fel. Tryck 'Försök igen' eller kontrollera kamerainställningar.</p>
+      <div style="margin-top:12px">
+        <button id="retry" style="padding:8px 12px;border-radius:8px;border:0;background:#2dd4bf;color:#04111a;cursor:pointer">Försök igen</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="./js/main.js"></script>
+</body>
+</html>
