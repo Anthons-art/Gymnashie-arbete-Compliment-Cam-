@@ -1,35 +1,33 @@
-// app/js/detection.js
-let faceDetector = null;
+// detection.js (TF + BlazeFace via global window.tf / blazeface)
+let model = null;
 let videoEl = null;
 
 export async function initDetection(videoElement) {
   videoEl = videoElement;
-  // dynamic import from jsdelivr CDN
-  const vision = await import("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest");
-  const { FaceDetector, FilesetResolver } = vision;
-  const filesetResolver = await FilesetResolver.forVisionTasks(
-    "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm"
-  );
-  // create detector with default model packaged in WASM
-  faceDetector = await FaceDetector.createFromOptions(filesetResolver, {
-    runningMode: "VIDEO",
-    minDetectionConfidence: 0.55
-  });
+  if (!model) {
+    // blazeface ligger nu globalt på window.blazeface
+    if (!window.tf || !window.blazeface) throw new Error('TFJS eller BlazeFace ej laddat');
+    model = await window.blazeface.load();
+    console.log('✅ BlazeFace model loaded');
+  }
+}
+
+export async function detectFacesAsync() {
+  if (!model || !videoEl) return { count: 0, detections: [] };
+  try {
+    const preds = await model.estimateFaces(videoEl, false);
+    const detections = preds.map(p => ({
+      topLeft: p.topLeft,
+      bottomRight: p.bottomRight,
+      probability: Array.isArray(p.probability) ? p.probability[0] : p.probability
+    }));
+    return { count: detections.length, detections };
+  } catch (e) {
+    console.warn('detectFacesAsync error', e);
+    return { count: 0, detections: [] };
+  }
 }
 
 export function isReady() {
-  return !!faceDetector;
-}
-
-// returns { count, detections }
-export function detectFaces(ts) {
-  if (!faceDetector || !videoEl) return { count: 0, detections: [] };
-  try {
-    const result = faceDetector.detectForVideo(videoEl, ts);
-    const detections = result?.detections ?? [];
-    return { count: detections.length, detections };
-  } catch (e) {
-    console.warn('detectFaces error', e);
-    return { count: 0, detections: [] };
-  }
+  return !!model;
 }
