@@ -1,8 +1,12 @@
 // app/js/main.js
+
 import { initDetection, detectFacesAsync, isReady } from './detection.js';
-import { initCompliments, randomCompliment, randomGroupCompliment } from './compliments.js';
+import { initCompliments, randomCompliment } from './compliments.js';
 import { clearCanvas, drawFrame, drawRobotIdle, drawRobotSpeak } from './ui.js';
 import { initTTS, speak as ttsSpeak } from './tts.js';
+import { cfg } from './config.js';
+
+
 
 // DOM
 const canvas = document.getElementById('canvas');
@@ -21,9 +25,55 @@ const STABLE_FRAMES = 5;
 let state = 'idle';
 let stateUntil = 0;
 
+// Kontrollera om en detektion är relevant (ROI + minFaceSize + sannolikhet)
+function detectionIsValid(det, canvasWidth, canvasHeight, config) {
+  // det.topLeft = [x,y], det.bottomRight = [x,y], det.probability
+  const [x1, y1] = det.topLeft;
+  const [x2, y2] = det.bottomRight;
+  const w = Math.abs(x2 - x1);
+  const h = Math.abs(y2 - y1);
+  const cx = x1 + w/2;
+  const cy = y1 + h/2;
+
+  // ROI: mitt 70% område
+  const roi = {
+    xMin: canvasWidth * 0.15,
+    xMax: canvasWidth * 0.85,
+    yMin: canvasHeight * 0.15,
+    yMax: canvasHeight * 0.85
+  };
+  const insideROI = cx >= roi.xMin && cx <= roi.xMax && cy >= roi.yMin && cy <= roi.yMax;
+
+  // minFaceFrac: min bredd som andel av canvas (t.ex. 0.10 = 10%)
+  const minFacePixels = canvasWidth * config.minFaceFrac;
+
+  const bigEnough = w >= minFacePixels;
+  const probOk = (det.probability ?? 0) >= config.minProbability;
+
+  return insideROI && bigEnough && probOk;
+}
+
 // Detection worker state
 let latestDetection = { count: 0, detections: [] };
 let runningDetection = false;
+
+// --- frame history / smoothing ---
+const frameHistory = [];
+const historyLen = cfg.detection.stableFrames || 12; // antal frames i historiken
+const requiredHits = Math.ceil(historyLen * 0.75);   // 75% av frames måste vara giltiga
+
+function pushFrame(validCount) {
+  frameHistory.push(validCount > 0 ? 1 : 0);
+  if (frameHistory.length > historyLen) frameHistory.shift();
+}
+
+function stableDetected() {
+  if (frameHistory.length < historyLen) return false; // vänta tills full historik
+  const sum = frameHistory.reduce((a,b)=>a+b,0);
+  return sum >= requiredHits;
+}
+
+
 
 // greeting stats (localStorage)
 function incGreetingCount() {
@@ -102,12 +152,7 @@ function updateStateWithFace(faceCount) {
       break;
     case 'wave':
       if (performance.now() >= stateUntil) {
-        let text;
-        if (faceCount === 1) {
-          text = randomCompliment();
-        } else if (faceCount > 1) {
-          text = randomGroupCompliment();
-        }
+        const text = randomCompliment();
         triggerComplimentFlow(text);
       }
       break;
@@ -117,10 +162,44 @@ function updateStateWithFace(faceCount) {
   }
 }
 
+// --- helper: räkna giltiga detectioner ---
+function countValidDetections(detections, canvas) {
+  if (!detections || !detections.length) return 0;
+  let c = 0;
+  for (const d of detections) {
+    if (detectionIsValid(d, canvas.width, canvas.height, cfg.detection)) c++;
+  }
+  return c;
+}
+
 // huvudloop - ritar UI och läser senaste detection-resultat
 function loop(t) {
   if (!started) return;
   clearCanvas(ctx, canvas);
+
+// i loop(t) - läs senaste detection
+const { detections } = latestDetection; // latestDetection uppdateras i detectionWorker
+const validCount = countValidDetections(detections, canvas);
+
+// fyll historiken
+pushFrame(validCount);
+if (!inCooldown() && stableDetected()) {
+  setState('wave', cfg.timings.wave || 400);
+  frameHistory.length = 0; // reset
+}
+
+
+// kontrollera cooldown och stabilitet
+if (!inCooldown() && stableDetected()) {
+  // trigga wave->speak via er state-machine
+  if (state === 'idle') {
+    setState('wave', cfg.timings.wave || 400);
+  }
+  // Töm history så ni inte direkt retriggar innan cooldown
+  frameHistory.length = 0;
+}
+
+
 
   // Läs senaste detection-resultat (uppdateras av detectionWorker)
   const { count } = latestDetection;
