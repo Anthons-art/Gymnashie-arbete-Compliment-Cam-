@@ -1,6 +1,6 @@
 // app/js/main.js
 import { initDetection, detectFacesAsync, isReady } from './detection.js';
-import { initCompliments, randomCompliment } from './compliments.js';
+import { initCompliments, randomCompliment, randomGroupCompliment } from './compliments.js';
 import { clearCanvas, drawFrame, drawRobotIdle, drawRobotSpeak } from './ui.js';
 import { initTTS, speak as ttsSpeak } from './tts.js';
 
@@ -102,7 +102,12 @@ function updateStateWithFace(faceCount) {
       break;
     case 'wave':
       if (performance.now() >= stateUntil) {
-        const text = randomCompliment();
+        let text;
+        if (faceCount === 1) {
+          text = randomCompliment();
+        } else if (faceCount > 1) {
+          text = randomGroupCompliment();
+        }
         triggerComplimentFlow(text);
       }
       break;
@@ -186,4 +191,3 @@ adminLink.addEventListener('click', (e) => {
 
 // auto-boot minimal så Start blir snabb (vi initierar så mycket vi kan i bakgrunden)
 boot();
-
