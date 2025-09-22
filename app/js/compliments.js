@@ -46,3 +46,7 @@ export function randomComplimentByTime() {
 export function randomCompliment() {
   return randomComplimentByTime();
 }
+export function randomGroupCompliment() {
+  const bag = (poolByCat['grupp'] && poolByCat['grupp'].length) ? poolByCat['grupp'] : poolDefault;
+  return pickNoRepeat(bag);
+}
