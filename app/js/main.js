@@ -3,7 +3,7 @@
 // =========================
 import { initDetection, detectFacesAsync, isReady } from './detection.js';
 import { initCompliments, randomCompliment } from './compliments.js';
-import { clearCanvas, drawFrame, drawRobotIdle, drawRobotSpeak } from './ui.js';
+import { initUI, clearCanvas, drawFrame, drawRobotIdle, drawRobotSpeak } from './ui.js';
 import { initTTS, speak as ttsSpeak } from './tts.js';
 import { cfg } from './config.js';
 
@@ -12,7 +12,7 @@ import { cfg } from './config.js';
 // DOM ELEMENTS
 // =========================
 const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
+const ctx = initUI(canvas);
 const startBtn = document.getElementById('start');
 const statusEl = document.getElementById('status');
 const overlay = document.getElementById('overlay');
