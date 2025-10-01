@@ -5,14 +5,114 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>ComplimentCam – POC</title>
   <style>
-    html,body {margin:0;height:100%;background:#0b1020;color:#fff;font-family:system-ui}
-    #wrap {display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:16px}
-    #start {padding:14px 20px;font-size:18px;border-radius:10px;border:0;cursor:pointer;background:#2dd4bf;color:#04111a}
-    #canvas {width:90vw;max-width:800px;aspect-ratio:4/3;background:#111;border-radius:16px;box-shadow:0 8px 30px rgba(0,0,0,0.5)}
-    #status {margin-top:10px;opacity:.9}
-    #overlay {position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);z-index:50}
-    #overlay .box {background:#111;padding:20px;border-radius:12px;border:2px solid #2dd4bf;max-width:90%;text-align:center}
-    a.small {color:#9ee7d5;font-size:13px}
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      background: #0f172a; /* mörk bakgrund */
+      overflow: hidden;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+
+    #wrap {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    #canvas {
+      display: block;
+      width: 100vw;
+      height: 100vh;
+      touch-action: none;
+      -webkit-user-select: none;
+      user-select: none;
+      background: transparent;
+    }
+
+    /* Start-knapp */
+    #start {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      padding: 14px 20px;
+      font-size: 18px;
+      border-radius: 10px;
+      border: 0;
+      cursor: pointer;
+      background: #2dd4bf;
+      color: #04111a;
+      font-weight: bold;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      transition: all 0.2s ease;
+      z-index: 50;
+    }
+    #start:hover {
+      background: #14b8a6;
+      transform: scale(1.05);
+    }
+
+    /* Status uppe till höger */
+    #status {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      color: rgba(255,255,255,0.9);
+      font-size: 15px;
+      z-index: 50;
+    }
+
+    /* Admin-länk nere till höger */
+    a.small {
+      color: #9ee7d5;
+      font-size: 13px;
+      position: absolute;
+      bottom: 16px;
+      right: 16px;
+      text-decoration: none;
+      z-index: 50;
+    }
+    a.small:hover {
+      text-decoration: underline;
+    }
+
+    /* Overlay */
+    #overlay {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,0.6);
+      z-index: 100;
+    }
+
+    #overlay .box {
+      background: #111;
+      padding: 20px;
+      border-radius: 12px;
+      border: 2px solid #2dd4bf;
+      max-width: 90%;
+      text-align: center;
+      color: #fff;
+    }
+
+    #retry {
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 0;
+      background: #2dd4bf;
+      color: #04111a;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.2s ease;
+    }
+    #retry:hover {
+      background: #14b8a6;
+      transform: scale(1.05);
+    }
   </style>
 </head>
 <body>
@@ -20,7 +120,7 @@
     <button id="start">Starta ComplimentCam</button>
     <canvas id="canvas" width="640" height="480"></canvas>
     <div id="status">Status: väntar…</div>
-    <div style="margin-top:8px"><a class="small" href="#" id="adminLink">Admin: visa statistik</a></div>
+    <a class="small" href="#" id="adminLink">Admin: visa statistik</a>
   </div>
 
   <div id="overlay">
@@ -28,14 +128,16 @@
       <h2 id="overlayTitle">Åtgärd krävs</h2>
       <p id="overlayMsg">Något gick fel. Tryck 'Försök igen' eller kontrollera kamerainställningar.</p>
       <div style="margin-top:12px">
-        <button id="retry" style="padding:8px 12px;border-radius:8px;border:0;background:#2dd4bf;color:#04111a;cursor:pointer">Försök igen</button>
+        <button id="retry">Försök igen</button>
       </div>
     </div>
   </div>
-<!-- TensorFlow.js -->
-<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.21.0/dist/tf.min.js"></script>
-<!-- BlazeFace -->
-<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/blazeface@0.0.7/dist/blazeface.min.js"></script>
+
+  <!-- TensorFlow.js -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.21.0/dist/tf.min.js"></script>
+  <!-- BlazeFace -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/blazeface@0.0.7/dist/blazeface.min.js"></script>
+  <!-- Huvudscript -->
   <script type="module" src="./js/main.js"></script>
 </body>
 </html>
