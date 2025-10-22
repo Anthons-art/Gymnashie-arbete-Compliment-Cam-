@@ -7,29 +7,29 @@ export async function initCompliments() {
   try {
     const res = await fetch('./compliments.json');
     poolByCat = await res.json();
-    // build default pool (all categories merged)
     poolDefault = Object.values(poolByCat).flat();
   } catch (e) {
     console.error('Failed to load compliments.json', e);
-    poolDefault = ["Ha en fin dag!"];
+    poolDefault = [{ text: "Ha en fin dag!" }];
   }
 }
 
 function pickNoRepeat(arr) {
-  if (!arr || arr.length === 0) return "Ha en fin dag!";
+  if (!arr || arr.length === 0) return { text: "Ha en fin dag!" };
   for (let i = 0; i < 12; i++) {
     const c = arr[Math.floor(Math.random() * arr.length)];
-    if (!lastN.includes(c)) {
-      lastN.push(c);
+    const text = typeof c === 'string' ? c : c.text;
+    if (!lastN.includes(text)) {
+      lastN.push(text);
       if (lastN.length > MAX_HISTORY) lastN.shift();
-      return c;
+      return typeof c === 'string' ? { text: c } : c;
     }
   }
-  // fallback
-  const fallback = arr[Math.floor(Math.random() * arr.length)];
-  lastN.push(fallback);
+const fallback = arr[Math.floor(Math.random() * arr.length)];
+  const text = typeof fallback === 'string' ? fallback : fallback.text;
+  lastN.push(text);
   if (lastN.length > MAX_HISTORY) lastN.shift();
-  return fallback;
+  return typeof fallback === 'string' ? { text: fallback } : fallback;
 }
 
 export function randomComplimentByTime() {
@@ -37,16 +37,16 @@ export function randomComplimentByTime() {
   let cat = 'allman';
   if (h < 10) cat = 'morgon';
   else if (h >= 15 && h < 18) cat = 'fredag';
-  // safe pick
-  const bag = (poolByCat[cat] && poolByCat[cat].length) ? poolByCat[cat] : poolDefault;
+  const bag = poolByCat[cat]?.length ? poolByCat[cat] : poolDefault;
   return pickNoRepeat(bag);
 }
 
-// exposed generic picker
 export function randomCompliment() {
   return randomComplimentByTime();
 }
+
 export function randomGroupCompliment() {
-  const bag = (poolByCat['grupp'] && poolByCat['grupp'].length) ? poolByCat['grupp'] : poolDefault;
+  const bag = poolByCat['grupp']?.length ? poolByCat['grupp'] : poolDefault;
   return pickNoRepeat(bag);
 }
+
