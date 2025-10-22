@@ -6,6 +6,8 @@ import { initCompliments, randomCompliment } from './compliments.js';
 import { initUI, clearCanvas, drawFrame, drawRobotIdle, drawRobotSpeak } from './ui.js';
 import { initTTS, speak as ttsSpeak } from './tts.js';
 import { cfg } from './config.js';
+import { loadRobotImage, drawRobotImage } from './ui.js';
+import { initAudio, playAudioByName } from './audio.js';
 
 
 // =========================
@@ -27,6 +29,8 @@ let video = null;
 let started = false;
 let stableCounter = 0;
 const STABLE_FRAMES = 5;
+
+let currentCompliment = ''; 
 
 let state = 'idle';
 let stateUntil = 0;
@@ -156,12 +160,26 @@ async function detectionWorker() {
 // =========================
 // ROBOT / COMPLIMENT FLOW
 // =========================
-function triggerComplimentFlow(text) {
-  drawRobotSpeak(ctx, canvas, text);
+function triggerComplimentFlow(compliment) {
+  currentCompliment = compliment.text;
+  drawRobotSpeak(ctx, canvas, compliment.text);
   incGreetingCount();
-  ttsSpeak(text);
-  setState('cooldown', 3500);
+
+  // Om det finns ett specifikt ljud → spela det
+  if (compliment.audio) {
+    const audio = new Audio(`./assets/sfx/${compliment.audio}`);
+    audio.play().catch(e => console.warn('Audio play failed', e));
+  } else {
+    // fallback till TTS eller slumpat ljud
+    playAudioByName(compliment.text);
+  }
+
+  const duration = Math.max(3500, compliment.text.length * 240);
+  setState('cooldown', duration);
 }
+
+
+
 
 function updateStateWithFace(faceCount) {
   if (faceCount > 0) stableCounter++;
@@ -173,8 +191,8 @@ function updateStateWithFace(faceCount) {
       break;
     case 'wave':
       if (performance.now() >= stateUntil) {
-        const text = randomCompliment();
-        triggerComplimentFlow(text);
+        const compliment = randomCompliment();
+        triggerComplimentFlow(compliment);
       }
       break;
     case 'cooldown':
@@ -184,13 +202,22 @@ function updateStateWithFace(faceCount) {
 }
 
 
+
 // =========================
 // MAIN LOOP
 // =========================
 function loop(t) {
   if (!started) return;
+
+  // Rensa canvasen
   clearCanvas(ctx, canvas);
 
+  // Rita robotbild som bakgrund (om laddad)
+  if (typeof drawRobotImage === 'function') {
+    drawRobotImage(ctx, canvas);
+  }
+
+  // Hämta senaste detektion
   const { detections } = latestDetection;
   const validCount = countValidDetections(detections, canvas);
 
@@ -202,13 +229,16 @@ function loop(t) {
 
   updateStateWithFace(latestDetection.count);
 
-  drawFrame(ctx, canvas);
-  if (state === 'idle' || state === 'wave' || state === 'cooldown') {
-    drawRobotIdle(ctx, canvas, t);
-  }
+  // Om den pratar – rita talbubblan ovanpå
+  if (state === 'cooldown' && latestDetection.count > 0) {
+  drawRobotSpeak(ctx, canvas, currentCompliment); // visa samma komplimang
+  } 
+
+
 
   requestAnimationFrame(loop);
 }
+
 
 
 // =========================
@@ -227,8 +257,22 @@ async function boot() {
     statusEl.textContent = 'Initierar komplimanger...';
     await initCompliments();
 
+        statusEl.textContent = 'Laddar robotbild...';
+    try {
+      await loadRobotImage('./assets/robot/robot.png');
+      statusEl.textContent = 'Robotbild laddad';
+    } catch (e) {
+      console.warn('Robot image load failed', e);
+      // vi fortsätter ändå utan bild
+      statusEl.textContent = 'Robotbild kunde inte laddas';
+    }
+    
     statusEl.textContent = 'Initierar röst (TTS)...';
     await initTTS().catch(() => {});
+
+    statusEl.textContent = 'Laddar ljudfiler...';
+    await initAudio();
+
 
     statusEl.textContent = 'Klar – tryck Starta';
     startBtn.disabled = false;
@@ -268,3 +312,4 @@ adminLink.addEventListener('click', (e) => {
 
 // Auto-boot för snabb start
 boot();
+
