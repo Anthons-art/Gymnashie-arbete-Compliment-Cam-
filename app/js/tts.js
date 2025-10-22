@@ -1,16 +1,7 @@
-/* tts.js  ----------------
-   Text-to-Speech handling via Web Speech API
-*/
-
-// -------------------------
-// STATE
-// -------------------------
+// app/js/tts.js
 let chosenVoice = null;
 let supportsTTS = ('speechSynthesis' in window);
 
-// -------------------------
-// INIT
-// -------------------------
 export async function initTTS(preferredLang = 'sv-SE') {
   if (!supportsTTS) return false;
   return new Promise(resolve => {
@@ -24,9 +15,6 @@ export async function initTTS(preferredLang = 'sv-SE') {
   });
 }
 
-// -------------------------
-// SPEAK
-// -------------------------
 export function speak(text, opts = {}) {
   if (!supportsTTS || !chosenVoice) return false;
   try {
