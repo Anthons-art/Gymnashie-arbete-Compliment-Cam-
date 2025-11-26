@@ -1,0 +1,15 @@
+{  
+    "Sannegarden_single": [
+        { "text": "Välkommen till Sannegården! Hoppas du får en fantastisk dag.", "audio": ""},
+        {"text": "Kul att se dig här på Sannegården!", "audio": ""},
+        { "text": "Du gör Sannegården lite bättre idag!", "audio": ""}
+],
+
+
+    "Sannegården_group":[
+        { "text": "Välkomna till Sannegården allihopa!","audio":"" },
+        { "text": "Vilket härligt gäng här på Sannegården!","audio":""  },
+        { "text": "Sannegården är glad att ha er här", "audio":"" },
+        { "text": "Tack för idag allihopa!", "audio":""}
+  ]
+}
