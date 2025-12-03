@@ -31,4 +31,3 @@ export function speak(text, opts = {}) {
     return false;
   }
 }
-
