@@ -1,54 +1,51 @@
 {
   "morgon": [
-    { "text": "Vilken härlig start på dagen!", "audio": "Vilken_härlig_start_på_dagen.mp3" },
-    { "text": "Du sätter tonen idag!", "audio": "Du_sätter_tonen_idag.mp3" },
-    { "text": "Bra humör smittar — tack för det!", "audio": "Bra_humör_smittar.mp3" },
-    { "text": "Ny dag, nya möjligheter!", "audio": "Ny_dag_nya_möjligheter.mp3" },
-    { "text": "Din energi är inspirerande!", "audio": "Din_energi_är_inspirerande.mp3" }
-  ],
-
-  "pepp": [
-    { "text": "Du fixar det här!", "audio": "Du_fixar_det_här.mp3" },
-    { "text": "Ditt arbete märks — bra jobbat!", "audio": "Ditt_arbete_märks_bra_jobbat.mp3" },
-    { "text": "Fortsätt så — du är på rätt spår!", "audio": "Fortsätt_så_du_är_på_rätt_spår.mp3" },
-    { "text": "Du lär dig mer varje dag!", "audio": "Du_lär_dig_mer_varje_dag.mp3" },
-    { "text": "Ge inte upp, du kommer klara det!", "audio": "Ge_inte_upp_du_kommer_klara_det.mp3" }
+    { "text": "God morgon! Du ser redo ut för en bra dag.", "audio": "god_morgon_du_ser_redo_ut.mp3" },
+    { "text": "Vilken bra energi du sprider redan!", "audio": "vilken_bra_energi_du_sprider_redan.mp3" },
+    { "text": "Du verkar piggare än kaffet idag!", "audio": "du_verkar_piggare_an_kaffet_idag.mp3" },
+    { "text": "Nya möjligheter väntar — kör hårt!", "audio": "nya_mojligheter_vantar_kor_hart.mp3" },
+    { "text": "Din morgon-look är på topp!", "audio": "din_morgon_look_ar_pa_topp.mp3" }
   ],
 
   "allman": [
-    { "text": "Vilken energi du har idag!", "audio": "Vilken_energi_du_har_idag.mp3" },
-    { "text": "Du gör korridoren ljusare.", "audio": "Du_gör_korridoren_ljusare.mp3" },
-    { "text": "Det är kul att se dig!", "audio": "Det_är_kul_att_se_dig.mp3" },
-    { "text": "Du gör skillnad bara genom att vara här.", "audio": "Du_gör_skillnad_bara_genom_att_vara_här.mp3" },
-    { "text": "Bra jobbat med det du gör!", "audio": "Bra_jobbat_med_det_du_gör.mp3" },
-    { "text": "Ditt leende gör dagen bättre.", "audio": "Ditt_leende_gör_dagen_bättre.mp3" },
-    { "text": "Imponerande fokus!", "audio": "Imponerande_fokus.mp3" },
-    { "text": "Stolt över din insats idag!", "audio": "Stolt_över_din_insats_idag.mp3" },
-    { "text": "Du sprider bra energi.", "audio": "Du_sprider_bra_energi.mp3" },
-    { "text": "Fint att se dig ta plats.", "audio": "Fint_att_se_dig_ta_plats.mp3" }
+    { "text": "Vilken positiv energi du har!", "audio": "vilken_positiv_energi_du_har.mp3" },
+    { "text": "Du gör verkligen rummet ljusare.", "audio": "du_gor_verkligen_rummet_ljusare.mp3" },
+    { "text": "Jag blir glad när jag ser dig!", "audio": "jag_blir_glad_nar_jag_ser_dig.mp3" },
+    { "text": "Du verkar ha en bra dag idag.", "audio": "du_verkar_ha_en_bra_dag_idag.mp3" },
+    { "text": "Bra aura där — keep it up!", "audio": "bra_aura_dar_keep_it_up.mp3" },
+    { "text": "Ditt leende smittar av sig!", "audio": "ditt_leende_smattar_av_sig.mp3" },
+    { "text": "Det märks att du trivs här.", "audio": "det_marcks_att_du_trivs_har.mp3" },
+    { "text": "Du har något speciellt — det syns!", "audio": "du_har_nagot_speciellt_det_syns.mp3" },
+    { "text": "Jag gillar din stil.", "audio": "jag_gillar_din_stil.mp3" },
+    { "text": "Du ser fokuserad ut — imponerande!", "audio": "du_ser_fokuserad_ut_imponerande.mp3" }
   ],
 
   "studie": [
-    { "text": "Du är en problemlösare!", "audio": "Du_är_en_problemlösare.mp3" },
-    { "text": "Bra tänkt — din idé var smart.", "audio": "Bra_tänkt_din_ide_var_smart.mp3" },
-    { "text": "Din envishet lönar sig.", "audio": "Din_envishet_lönar_sig.mp3" },
-    { "text": "Fortsätt vara nyfiken!", "audio": "Fortsätt_vara_nyfiken.mp3" },
-    { "text": "Det märks att du jobbar hårt.", "audio": "Det_märks_att_du_jobbar_hårt.mp3" }
+    { "text": "Du verkar riktigt koncentrerad, bra jobbat!", "audio": "du_verkar_riktigt_koncentrerad_bra_jobbat.mp3" },
+    { "text": "Fortsätt så — resultatet kommer löna sig.", "audio": "fortsatt_sa_resultatet_kommer_lona_sig.mp3" }
+  ],
+
+  "pepp": [
+    { "text": "Du har koll — fortsätt så!", "audio": "du_har_koll_fortsatt_sa.mp3" },
+    { "text": "Du fixar det här utan problem.", "audio": "du_fixar_det_har_utan_problem.mp3" },
+    { "text": "Kom ihåg, du är bättre än du tror!", "audio": "kom_ihag_du_ar_battre_an_du_tror.mp3" },
+    { "text": "Det är okej att ta en paus också ibland.", "audio": "det_ar_okej_att_ta_en_paus_också_ibland.mp3" },
+    { "text": "Du är på rätt väg — keep going!", "audio": "du_ar_pa_ratt_vag_keep_going.mp3" }
   ],
 
   "fredag": [
-    { "text": "Fredagspepp — du klarade veckan!", "audio": "Fredagspepp_du_klarade_veckan.mp3" },
-    { "text": "Du förtjänar en bra helg!", "audio": "Du_förtjänar_en_bra_helg.mp3" },
-    { "text": "Bra jobbat denna vecka!", "audio": "Bra_jobbat_denna_vecka.mp3" },
-    { "text": "Njut av en välförtjänt paus!", "audio": "Njut_av_en_välförtjänt_paus.mp3" }
+    { "text": "Fredagspepp! Du klarade veckan!", "audio": "fredagspepp_du_klarade_veckan.mp3" },
+    { "text": "Snyggt jobbat, nu förtjänar du helg!", "audio": "snyggt_jobbat_nu_fortjanar_du_helg.mp3" },
+    { "text": "Veckan avklarad — dags för återhämtning.", "audio": "veckan_avklarad_dags_for_aterhamtning.mp3" },
+    { "text": "Ha en grym helg, du har gjort det bra!", "audio": "ha_en_grym_helg_du_har_gjort_det_bra.mp3" },
+    { "text": "Tack för att du spred bra energi hela veckan!", "audio": "tack_for_att_du_spred_bra_energi_hela_veckan.mp3" }
   ],
 
   "grupp": [
-    { "text": "Vilket härligt gäng ni är!", "audio": "Vilket_härligt_gäng_ni_är.mp3" },
-    { "text": "Ni sprider en fantastisk energi tillsammans!", "audio": "Ni_sprider_en_fantastisk_energi_tillsammans.mp3" },
-    { "text": "Så roligt att se er alla här!", "audio": "Så_roligt_att_se_er_alla_här.mp3" },
-    { "text": "Vilken fin grupp ni är!", "audio": "vilken_fin_grupp_ni_är.mp3" }
+    { "text": "Vilket härligt gäng!", "audio": "vilket_harligt_gang.mp3" },
+    { "text": "Ni sprider verkligen glädje tillsammans!", "audio": "ni_sprider_gladje_tillsammans.mp3" },
+    { "text": "Bra teamwork — ni ser starka ut!", "audio": "bra_teamwork_ni_ser_starka_ut.mp3" },
+    { "text": "Det där ser ut som en toppengrupp!", "audio": "det_dar_ser_ut_som_en_toppengrupp.mp3" },
+    { "text": "Vilken energi ni har tillsammans!", "audio": "vilken_energi_ni_har_tillsammans.mp3" }
   ]
 }
-
-
