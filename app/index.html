@@ -116,8 +116,23 @@
   </style>
 </head>
 <body>
+  <button id="twoBtn" style="
+  z-index: 9999;
+  position: fixed;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 20px;
+  background: #ffca3a;
+  border: none;
+  border-radius: 50%;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+">
+✨
+</button>
   <div id="wrap">
-    <button id="start">Starta ComplimentCam</button>
     <canvas id="canvas" width="640" height="480"></canvas>
     <div id="status">Status: väntar…</div>
     <a class="small" href="#" id="adminLink">Admin: visa statistik</a>
