@@ -1,0 +1,16 @@
+{
+  "name": "gymnashie-arbete-compliment-cam--main",
+  "version": "1.0.0",
+  "description": "En enkel webapp som använder MediaPipe Face Detection i webbläsaren för att visa en gullig robot som ger komplimanger när någon står framför en platta.",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
