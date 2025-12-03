@@ -1,9 +1,9 @@
 export const cfg = {
   detection: {
     minProbability: 0.65,
-    minFaceFrac: 0.10,
+    minFaceFrac: 0.07,
     useROI: true,
-    stableFrames: 50
+    stableFrames: 15
   },
   timings: {
     wave: 400,
